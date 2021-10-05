@@ -1,0 +1,17 @@
+{
+    "/api/v1/*": {
+        "target": "http://localhost:65504/api",
+        "secure": false,
+        "logLevel": "debug"
+    },
+    "/api/v2*": {
+        "target": "https://api.first.org/data/v1/countries",
+        "secure": false,
+        "logLevel": "debug"
+    },
+    "/api/v3*": {
+        "target": "http://universities.hipolabs.com/search?country=",
+        "secure": false,
+        "logLevel": "debug"
+    }
+}

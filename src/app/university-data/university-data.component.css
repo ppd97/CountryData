@@ -1,0 +1,12 @@
+table {
+    width: 100%;
+  }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+h1{
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin-left:15px;
+}
+.data{
+  font-family: 'Poppins', sans-serif;
+}

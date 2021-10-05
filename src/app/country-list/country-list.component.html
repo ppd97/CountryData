@@ -1,0 +1,18 @@
+
+  <!-- <select>
+    <option *ngFor="let option of countries">{{option}}</option>
+  </select> -->
+  <form class="example-form" (ngSubmit)="OnInput()">
+    <mat-label class="label">Country</mat-label><br>
+    <mat-form-field class="example-full-width" appearance="fill">
+        <input class="input" matInput placeholder="Search for Country" [formControl]="control"
+        [matAutocomplete]="auto" value="" >
+    <mat-autocomplete #auto="matAutocomplete" >
+      <mat-option  class="input" *ngFor="let options of filteredCountries | async" [value]="options">
+        {{options}}
+      </mat-option>
+    </mat-autocomplete><br>
+    </mat-form-field>
+    <button mat-raised-button color="primary" class="btn">Search</button>
+  </form>
+
