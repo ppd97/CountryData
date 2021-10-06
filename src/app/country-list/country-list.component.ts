@@ -4,6 +4,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { RootObject} from './country.model';
 
 @Component({
   selector: 'app-country-list',
@@ -14,32 +15,30 @@ export class CountryListComponent implements OnInit {
 
   constructor(private countryServices:CountryListApiService,private router:Router) { }
   value!:string;
-  countryData!:any;
+  countryData=<RootObject>{};
+  dataArray:Array<RootObject>=new Array;
   countryCode?:string
-  country=[]
-  regions=[]
-  full!:string;
-  fullregions!:string;
+  fullData:Array<RootObject>=new Array;
   getVal!:string;
   countries:Array<any>=new Array;
   control = new FormControl();
   filteredCountries!: Observable<string[]>;
   ngOnInit(): void {
     
-    this.countryServices.getCountries().subscribe(res => {
-      console.log(res)
+    this.countryServices.getCountries().subscribe((res:any)=> {
       
       this.countryData=res;
-      for ([this.value] of Object.entries(this.countryData['data'])) {
-        this.country=this.countryData['data'][`${this.value}`]['country'];
-        // this.regions=this.countryData['data'][`${this.value}`]['region']
-        // this.full=`${this.country}`
-        // this.fullregions=`${this.regions}`
-        console.log("DataData:",this.countryData['data'][`${this.value}`])
-         this.countries.push(this.country)
-        
+      this.dataArray.push(this.countryData);
+      //console.log("Country Data",Object.entries(this.countryData['data']['DZ']['country']))
+      for(let i of this.dataArray)
+      {
+          for(let j of Object.entries ( i.data).map(([name,value])=>({name,value})))
+          {
+                this.fullData.push(j.value.country)
+          }
+
       }
-      console.log(this.countries)
+     
       this. filteredCountries = this.control.valueChanges.pipe(
         startWith(''),
         map(value => this._filter(value))
@@ -48,7 +47,7 @@ export class CountryListComponent implements OnInit {
   }
   private _filter(value: any): any {
     const filterValue = this._normalizeValue(value);
-    return this.countries.filter(country => this._normalizeValue(country).includes(filterValue));
+    return this.fullData.filter(country => this._normalizeValue(country).includes(filterValue));
   }
   private _normalizeValue(value: any) {
     return value.toLowerCase().replace(/\s/g, '');
