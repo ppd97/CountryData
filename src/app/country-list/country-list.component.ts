@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CountryListApiService } from '../services/country-list-api.service';
-import {FormControl, FormGroup} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { CountryService } from '../services/country.service';
+import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RootObject} from './country.model';
+import { RootObject} from '../models/country.model';
 
 @Component({
   selector: 'app-country-list',
@@ -13,52 +11,35 @@ import { RootObject} from './country.model';
 })
 export class CountryListComponent implements OnInit {
 
-  constructor(private countryServices:CountryListApiService,private router:Router) { }
-  value!:string;
-  countryData=<RootObject>{};
-  dataArray:Array<RootObject>=new Array;
-  countryCode?:string
-  fullData:Array<RootObject>=new Array;
-  getVal!:string;
-  countries:Array<any>=new Array;
-  control = new FormControl();
-  filteredCountries!: Observable<string[]>;
-  ngOnInit(): void {
-    
-    this.countryServices.getCountries().subscribe((res:any)=> {
-      
-      this.countryData=res;
-      this.dataArray.push(this.countryData);
-      //console.log("Country Data",Object.entries(this.countryData['data']['DZ']['country']))
-      for(let i of this.dataArray)
-      {
-          for(let j of Object.entries ( i.data).map(([name,value])=>({name,value})))
-          {
-                this.fullData.push(j.value.country)
+    private countryData:Array<RootObject>=new Array;
+    private countryCode!:string
+    public  selectControl = new FormControl();
+    public options: Array<RootObject>=new Array;
+
+    constructor(
+        private countryServices:CountryService,private router:Router) {
+          
           }
-
-      }
-     
-      this. filteredCountries = this.control.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value))
-      );
-    });
-  }
-  private _filter(value: any): any {
-    const filterValue = this._normalizeValue(value);
-    return this.fullData.filter(country => this._normalizeValue(country).includes(filterValue));
-  }
-  private _normalizeValue(value: any) {
-    return value.toLowerCase().replace(/\s/g, '');
-  }
-
-  OnInput()
-  {
-    console.log(this.control.value);
-    this.countryCode=this.control.value
-    this.router.navigate(['university',this.countryCode])
-  }
  
-
+    ngOnInit(): void {
+    
+        this.countryServices.getCountries().subscribe((res:RootObject)=> {
+            
+            this.countryData.push(res);
+      
+              for(let i of this.countryData ){
+                  for(let j of Object.entries ( i.data).map(([name,value])=>({name,value}))){
+                       this.options.push(j.value.country)
+                    }
+                }
+               
+          });    
+    }
+  
+    OnInput(){
+      this.countryCode=this.selectControl.value;
+      this.router.navigate(['university',this.countryCode])
+    }
+    
+ 
 }
